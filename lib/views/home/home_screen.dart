@@ -40,6 +40,13 @@ class HomeScreen extends StatelessWidget {
                 children: [
                   Text('$kWelcomeMessage${user.displayName ?? user.email}'),
                   Text('$kYourEmailMessage${user.email}'),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.pushNamed(
+                          context, '/health_insurance_reimbursement');
+                    },
+                    child: const Text('Solicitar Reembolso Plano de Saúde'),
+                  )
                 ],
               ),
             ),
