@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:yggdrasil/services/auth_service.dart';
-import 'package:yggdrasil/router/app_router.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:yggdrasil/widgets/login_button.dart';
-import 'package:yggdrasil/config/constants.dart'; // Adicione esta linha
-import 'package:yggdrasil/config/app_strings.dart'; // Adicione esta linha
-import '../home/home_screen.dart';
+import 'package:yggdrasil/widgets/login_body.dart';
+
+import '../home/home_screen.dart'; // adicione esta linha para importar o LoginBody
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
@@ -17,40 +14,22 @@ class LoginScreen extends StatelessWidget {
 
     if (user != null) {
       // Se o usuário estiver logado, redireciona para a tela inicial.
-      return HomeScreen();
+      return HomeScreen(); // Substitua por sua tela inicial.
     }
 
     // Se o usuário não estiver logado, mostra a tela de login.
     return Scaffold(
-      body: _LoginBody(),
-    );
-  }
-}
-
-class _LoginBody extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    final authService = Provider.of<AuthService>(context, listen: false);
-
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+      body: Stack(
         children: <Widget>[
-          LoginButton(
-            text: kGoogleLoginButtonText,
-            assetName: kGoogleLogoAssetName,
-            color: kGoogleButtonColor,
-            textColor: kGoogleButtonTextColor,
-            onPressed: () async {
-              await authService.signInWithGoogle().then((value) => {
-                    if (value != null)
-                      {
-                        Navigator.of(context)
-                            .pushReplacementNamed(AppRouter.homeScreen)
-                      }
-                  });
-            },
+          Container(
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/images/login_background.png'),
+                fit: BoxFit.cover,
+              ),
+            ),
           ),
+          const LoginBody(),
         ],
       ),
     );
