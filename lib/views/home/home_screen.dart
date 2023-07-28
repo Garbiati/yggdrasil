@@ -1,6 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:yggdrasil/services/auth_service.dart';
+import 'package:yggdrasil/config/constants.dart'; // Adicione esta linha
+import 'package:yggdrasil/config/app_strings.dart'; // Adicione esta linha
 
 class HomeScreen extends StatelessWidget {
   final AuthService _authService = AuthService();
@@ -17,15 +19,18 @@ class HomeScreen extends StatelessWidget {
         } else if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
         } else if (snapshot.data == null) {
-          return const Text('No user logged in.');
+          return const Text(
+              kNoUserLoggedInMessage); // Atualizado para usar a string constante
         } else {
           User user = snapshot.data!;
           return Scaffold(
             appBar: AppBar(
-              title: const Text('Home Page'),
+              title: const Text(
+                  kHomePageTitle), // Atualizado para usar a string constante
               actions: [
                 IconButton(
-                  icon: const Icon(Icons.account_circle),
+                  icon:
+                      kAccountIcon, // Atualizado para usar a constante de ícone
                   onPressed: () {
                     Navigator.pushNamed(context, '/profile');
                   },
@@ -36,8 +41,8 @@ class HomeScreen extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text('Welcome, ${user.displayName ?? user.email}'),
-                  Text('Your email: ${user.email}'),
+                  Text('$kWelcomeMessage${user.displayName ?? user.email}'),
+                  Text('$kYourEmailMessage${user.email}'), 
                   // Add more details here
                 ],
               ),

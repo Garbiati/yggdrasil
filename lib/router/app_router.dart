@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:yggdrasil/screens/login/login_screen.dart';
-import 'package:yggdrasil/screens/home/home_screen.dart';
-import 'package:yggdrasil/screens/profile/profile_screen.dart';
+import 'package:yggdrasil/views/login/login_screen.dart';
+import 'package:yggdrasil/views/home/home_screen.dart';
+import 'package:yggdrasil/views/profile/profile_screen.dart';
 
 class AppRouter {
   static const String homeScreen = '/home';
