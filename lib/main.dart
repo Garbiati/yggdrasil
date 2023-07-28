@@ -5,9 +5,9 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:yggdrasil/router/app_router.dart';
 import 'package:yggdrasil/services/auth_service.dart';
 import 'package:provider/provider.dart';
-import 'package:yggdrasil/screens/login/login_screen.dart'; // Importe sua tela de login aqui
-import 'package:yggdrasil/screens/home/home_screen.dart'; // Importe sua tela inicial aqui
-import 'firebase_options.dart';
+import 'package:yggdrasil/views/login/login_screen.dart';
+import 'package:yggdrasil/views/home/home_screen.dart';
+import 'config/firebase_options.dart';
 
 Future main() async {
   await dotenv.load();
