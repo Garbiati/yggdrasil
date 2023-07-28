@@ -29,7 +29,7 @@ class LoginScreen extends StatelessWidget {
               ),
             ),
           ),
-          const LoginBody(), // substitua _LoginBody por LoginBody
+          const LoginBody(),
         ],
       ),
     );

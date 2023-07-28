@@ -19,18 +19,15 @@ class HomeScreen extends StatelessWidget {
         } else if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
         } else if (snapshot.data == null) {
-          return const Text(
-              kNoUserLoggedInMessage); // Atualizado para usar a string constante
+          return const Text(kNoUserLoggedInMessage);
         } else {
           User user = snapshot.data!;
           return Scaffold(
             appBar: AppBar(
-              title: const Text(
-                  kHomePageTitle), // Atualizado para usar a string constante
+              title: const Text(kHomePageTitle),
               actions: [
                 IconButton(
-                  icon:
-                      kAccountIcon, // Atualizado para usar a constante de ícone
+                  icon: kAccountIcon,
                   onPressed: () {
                     Navigator.pushNamed(context, '/profile');
                   },
@@ -42,8 +39,7 @@ class HomeScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text('$kWelcomeMessage${user.displayName ?? user.email}'),
-                  Text('$kYourEmailMessage${user.email}'), 
-                  // Add more details here
+                  Text('$kYourEmailMessage${user.email}'),
                 ],
               ),
             ),
