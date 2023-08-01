@@ -82,6 +82,18 @@ class HealthInsuranceReimbursementScreenState
     });
   }
 
+  // Função para converter o tipo de beneficiário para string
+  String beneficiaryTypeToString(BeneficiaryType type) {
+    switch (type) {
+      case BeneficiaryType.holder:
+        return 'Titular';
+      case BeneficiaryType.dependent:
+        return 'Dependente';
+      default:
+        return '';
+    }
+  }
+
   // Função para construir a interface gráfica do widget
   @override
   Widget build(BuildContext context) {
@@ -178,32 +190,32 @@ class HealthInsuranceReimbursementScreenState
                                     // Dropdown de tipo de beneficiário
                                     Expanded(
                                       flex: 1,
-                                      child: DropdownButtonFormField(
+                                      child: DropdownButtonFormField<
+                                          BeneficiaryType>(
                                         decoration: const InputDecoration(
                                           labelText: 'Tipo',
                                           border: OutlineInputBorder(),
                                         ),
                                         value: _reimbursementRequest
                                             .beneficiaries[index].type,
-                                        items: BeneficiaryType.values
-                                            .map((BeneficiaryType type) {
-                                          return DropdownMenuItem(
-                                            value: type,
-                                            child: Text(type
-                                                .toString()
-                                                .split('.')
-                                                .last),
-                                          );
-                                        }).toList(),
-                                        onChanged: (BeneficiaryType? value) {
-                                          if (value != null) {
+                                        onChanged: (BeneficiaryType? newValue) {
+                                          if (newValue != null) {
                                             setState(() {
                                               _reimbursementRequest
                                                   .beneficiaries[index]
-                                                  .type = value;
+                                                  .type = newValue;
                                             });
                                           }
                                         },
+                                        items: BeneficiaryType.values
+                                            .map((BeneficiaryType type) {
+                                          return DropdownMenuItem<
+                                              BeneficiaryType>(
+                                            value: type,
+                                            child: Text(
+                                                beneficiaryTypeToString(type)),
+                                          );
+                                        }).toList(),
                                       ),
                                     ),
                                   ],
@@ -225,9 +237,9 @@ class HealthInsuranceReimbursementScreenState
                             shape: BoxShape.circle,
                           ),
                           child: IconButton(
-                            iconSize: 15.0,
+                            iconSize: 10.0,
                             padding: EdgeInsets.zero,
-                            icon: const Icon(Icons.close, color: Colors.red),
+                            icon: const Icon(Icons.close, color: Colors.black),
                             onPressed: () => _removeBeneficiary(index),
                           ),
                         ),
