@@ -143,7 +143,7 @@ class HealthInsuranceReimbursementScreenState
                           elevation: 2.0,
                           child: Padding(
                             padding: EdgeInsets.all(
-                                screenWidth * 0.02), // 2% da largura da tela
+                                screenWidth * 0.03), // 3% da largura da tela
                             child: Column(
                               children: <Widget>[
                                 // Campo para o nome do beneficiário
@@ -227,19 +227,19 @@ class HealthInsuranceReimbursementScreenState
                       ),
                       // Botão de excluir beneficiário
                       Positioned(
-                        top: 2.0,
-                        right: -2.0,
+                        top: 5.0,
+                        right: 0.0,
                         child: Container(
-                          width: 20.0,
-                          height: 20.0,
+                          width: 15.0,
+                          height: 15.0,
                           decoration: const BoxDecoration(
-                            color: Colors.white,
+                            color: Colors.red,
                             shape: BoxShape.circle,
                           ),
                           child: IconButton(
-                            iconSize: 10.0,
+                            iconSize: 15.0,
                             padding: EdgeInsets.zero,
-                            icon: const Icon(Icons.close, color: Colors.black),
+                            icon: const Icon(Icons.remove, color: Colors.white),
                             onPressed: () => _removeBeneficiary(index),
                           ),
                         ),
