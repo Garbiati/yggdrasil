@@ -1,10 +1,13 @@
 // Importando as dependências necessárias
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:yggdrasil/models/reimbursement_request.dart';
 import 'package:yggdrasil/models/beneficiary.dart';
 import 'package:provider/provider.dart';
 import 'package:yggdrasil/services/auth_service.dart';
 import 'package:extended_masked_text/extended_masked_text.dart';
+import 'package:file_picker/file_picker.dart';
 
 // Definindo o widget da tela de Solicitação de Reembolso de Plano de Saúde
 class HealthInsuranceReimbursementScreen extends StatefulWidget {
@@ -23,6 +26,9 @@ class HealthInsuranceReimbursementScreenState
   late final ReimbursementRequest _reimbursementRequest;
   // Inicializando uma lista para os controladores de texto dos campos de valor
   List<MoneyMaskedTextController> controllers = [];
+  final _dateController = TextEditingController();
+
+  File? _selectedFile;
 
   @override
   void initState() {
@@ -30,6 +36,8 @@ class HealthInsuranceReimbursementScreenState
 
     // Obtendo o nome do usuário logado
     final username = context.read<AuthService>().user.value?.displayName ?? '';
+
+    _dateController.text = DateFormat('dd/MM/yyyy').format(DateTime.now());
 
     // Criando uma nova solicitação de reembolso
     _reimbursementRequest = ReimbursementRequest(
@@ -91,6 +99,18 @@ class HealthInsuranceReimbursementScreenState
         return 'Dependente';
       default:
         return '';
+    }
+  }
+
+  Future<void> _pickFile() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles();
+
+    if (result != null) {
+      setState(() {
+        _selectedFile = File(result.files.single.path!);
+      });
+    } else {
+      // O usuário cancelou a seleção de arquivos
     }
   }
 
@@ -254,7 +274,19 @@ class HealthInsuranceReimbursementScreenState
                       style: TextStyle(color: Colors.blue)),
                   onPressed: _addBeneficiary,
                 ),
-                SizedBox(height: screenHeight * 0.02), // 2% da altura da tela
+                SizedBox(height: screenHeight * 0.02),
+                TextButton.icon(
+                  icon: const Icon(Icons.attach_file, color: Colors.blue),
+                  label: Text(
+                    _selectedFile != null
+                        ? 'Arquivo Anexado'
+                        : 'Anexar Arquivo',
+                    style: const TextStyle(color: Colors.blue),
+                  ),
+                  onPressed: _pickFile,
+                ),
+                SizedBox(height: screenHeight * 0.02),
+                // 2% da altura da tela
                 // Botão de enviar solicitação
                 ElevatedButton(
                   child: const Text('Enviar Solicitação',
