@@ -155,7 +155,9 @@ class HealthInsuranceReimbursementScreenState
           child: ConstrainedBox(
             constraints: BoxConstraints(minHeight: screenHeight),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start, // Alinha à esquerda
               children: <Widget>[
+                // Seção de Protocolo e Data (Mês/Ano)
                 Row(
                   children: [
                     // Campo de Protocolo
@@ -170,9 +172,7 @@ class HealthInsuranceReimbursementScreenState
                         ),
                       ),
                     ),
-                    const SizedBox(
-                        width: 10), // Espaço entre o Protocolo e os Dropdowns
-
+                    const SizedBox(width: 10),
                     // Dropdown para o Mês
                     Expanded(
                       flex: 1,
@@ -192,7 +192,7 @@ class HealthInsuranceReimbursementScreenState
                           }).toList(),
                           onChanged: (String? newValue) {
                             if (newValue != null) {
-                              // Defina o mês no seu objeto de solicitação de reembolso
+                              // Sua lógica de tratamento para o mês selecionado
                             }
                           },
                         ),
@@ -219,7 +219,7 @@ class HealthInsuranceReimbursementScreenState
                           }).toList(),
                           onChanged: (String? newValue) {
                             if (newValue != null) {
-                              // Defina o ano no seu objeto de solicitação de reembolso
+                              // Sua lógica de tratamento para o ano selecionado
                             }
                           },
                         ),
@@ -228,7 +228,8 @@ class HealthInsuranceReimbursementScreenState
                   ],
                 ),
                 SizedBox(height: screenHeight * 0.02),
-                // Campo para o nome do colaborador
+
+                // Campo do nome do colaborador
                 TextFormField(
                   decoration: const InputDecoration(
                     labelText: 'Nome do colaborador',
@@ -239,144 +240,169 @@ class HealthInsuranceReimbursementScreenState
                     _reimbursementRequest.requesterName = value;
                   },
                 ),
-                SizedBox(height: screenHeight * 0.02), // 2% da altura da tela
-                // Título da lista de beneficiários
-                const Text("Beneficiários",
-                    style:
-                        TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                // Lista de beneficiários
-                ...List.generate(_reimbursementRequest.beneficiaries.length,
-                    (index) {
-                  return Stack(
-                    children: <Widget>[
-                      // Caixa de detalhes do beneficiário
-                      Container(
-                        margin: EdgeInsets.symmetric(
-                            vertical:
-                                screenHeight * 0.01), // 1% da altura da tela
-                        child: Card(
-                          elevation: 2.0,
-                          child: Padding(
-                            padding: EdgeInsets.all(
-                                screenWidth * 0.03), // 3% da largura da tela
-                            child: Column(
-                              children: <Widget>[
-                                // Campo para o nome do beneficiário
-                                TextFormField(
-                                  decoration: const InputDecoration(
-                                    labelText: 'Nome do beneficiário',
-                                    border: OutlineInputBorder(),
-                                  ),
-                                  initialValue: _reimbursementRequest
-                                      .beneficiaries[index].name,
-                                  onChanged: (value) {
-                                    setState(() {
-                                      _reimbursementRequest
-                                          .beneficiaries[index].name = value;
-                                    });
-                                  },
-                                ),
-                                SizedBox(
-                                    height: screenHeight *
-                                        0.02), // 2% da altura da tela
-                                // Linha com o campo de valor e o dropdown de tipo de beneficiário
-                                Row(
+                SizedBox(height: screenHeight * 0.02),
+
+                // Seção Beneficiários
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      "Beneficiários",
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+// Lista de beneficiários
+                    ...List.generate(_reimbursementRequest.beneficiaries.length,
+                        (index) {
+                      return Stack(
+                        children: <Widget>[
+                          // Caixa de detalhes do beneficiário
+                          Container(
+                            margin: EdgeInsets.symmetric(
+                                vertical: screenHeight *
+                                    0.01), // 1% da altura da tela
+                            child: Card(
+                              elevation: 2.0,
+                              child: Padding(
+                                padding: EdgeInsets.all(screenWidth *
+                                    0.03), // 3% da largura da tela
+                                child: Column(
                                   children: <Widget>[
-                                    // Campo de valor
-                                    Expanded(
-                                      flex: 1,
-                                      child: TextFormField(
-                                        controller: controllers[index],
-                                        keyboardType: TextInputType.number,
-                                        decoration: const InputDecoration(
-                                          labelText: 'Valor',
-                                          border: OutlineInputBorder(),
-                                        ),
-                                        onChanged: (value) {
-                                          _reimbursementRequest
-                                                  .beneficiaries[index].amount =
-                                              controllers[index].numberValue;
-                                        },
+                                    // Campo para o nome do beneficiário
+                                    TextFormField(
+                                      decoration: const InputDecoration(
+                                        labelText: 'Nome do beneficiário',
+                                        border: OutlineInputBorder(),
                                       ),
+                                      initialValue: _reimbursementRequest
+                                          .beneficiaries[index].name,
+                                      onChanged: (value) {
+                                        setState(() {
+                                          _reimbursementRequest
+                                              .beneficiaries[index]
+                                              .name = value;
+                                        });
+                                      },
                                     ),
                                     SizedBox(
-                                        width: screenWidth *
-                                            0.02), // 2% da largura da tela
-                                    // Dropdown de tipo de beneficiário
-                                    Expanded(
-                                      flex: 1,
-                                      child: DropdownButtonFormField<
-                                          BeneficiaryType>(
-                                        decoration: const InputDecoration(
-                                          labelText: 'Tipo',
-                                          border: OutlineInputBorder(),
-                                        ),
-                                        value: _reimbursementRequest
-                                            .beneficiaries[index].type,
-                                        onChanged: (BeneficiaryType? newValue) {
-                                          if (newValue != null) {
-                                            setState(() {
+                                        height: screenHeight *
+                                            0.02), // 2% da altura da tela
+                                    // Linha com o campo de valor e o dropdown de tipo de beneficiário
+                                    Row(
+                                      children: <Widget>[
+                                        // Campo de valor
+                                        Expanded(
+                                          flex: 1,
+                                          child: TextFormField(
+                                            controller: controllers[index],
+                                            keyboardType: TextInputType.number,
+                                            decoration: const InputDecoration(
+                                              labelText: 'Valor',
+                                              border: OutlineInputBorder(),
+                                            ),
+                                            onChanged: (value) {
                                               _reimbursementRequest
-                                                  .beneficiaries[index]
-                                                  .type = newValue;
-                                            });
-                                          }
-                                        },
-                                        items: BeneficiaryType.values
-                                            .map((BeneficiaryType type) {
-                                          return DropdownMenuItem<
+                                                      .beneficiaries[index]
+                                                      .amount =
+                                                  controllers[index]
+                                                      .numberValue;
+                                            },
+                                          ),
+                                        ),
+                                        SizedBox(
+                                            width: screenWidth *
+                                                0.02), // 2% da largura da tela
+                                        // Dropdown de tipo de beneficiário
+                                        Expanded(
+                                          flex: 1,
+                                          child: DropdownButtonFormField<
                                               BeneficiaryType>(
-                                            value: type,
-                                            child: Text(
-                                                beneficiaryTypeToString(type)),
-                                          );
-                                        }).toList(),
-                                      ),
+                                            decoration: const InputDecoration(
+                                              labelText: 'Tipo',
+                                              border: OutlineInputBorder(),
+                                            ),
+                                            value: _reimbursementRequest
+                                                .beneficiaries[index].type,
+                                            onChanged:
+                                                (BeneficiaryType? newValue) {
+                                              if (newValue != null) {
+                                                setState(() {
+                                                  _reimbursementRequest
+                                                      .beneficiaries[index]
+                                                      .type = newValue;
+                                                });
+                                              }
+                                            },
+                                            items: BeneficiaryType.values
+                                                .map((BeneficiaryType type) {
+                                              return DropdownMenuItem<
+                                                  BeneficiaryType>(
+                                                value: type,
+                                                child: Text(
+                                                    beneficiaryTypeToString(
+                                                        type)),
+                                              );
+                                            }).toList(),
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ],
                                 ),
-                              ],
+                              ),
                             ),
                           ),
-                        ),
-                      ),
-                      // Botão de excluir beneficiário
-                      Positioned(
-                        top: 5.0,
-                        right: 0.0,
-                        child: Container(
-                          width: 15.0,
-                          height: 15.0,
-                          decoration: const BoxDecoration(
-                            color: Colors.red,
-                            shape: BoxShape.circle,
+                          // Botão de excluir beneficiário
+                          Positioned(
+                            top: 5.0,
+                            right: 0.0,
+                            child: Container(
+                              width: 15.0,
+                              height: 15.0,
+                              decoration: const BoxDecoration(
+                                color: Colors.red,
+                                shape: BoxShape.circle,
+                              ),
+                              child: IconButton(
+                                iconSize: 15.0,
+                                padding: EdgeInsets.zero,
+                                icon: const Icon(Icons.remove,
+                                    color: Colors.white),
+                                onPressed: () => _removeBeneficiary(index),
+                              ),
+                            ),
                           ),
-                          child: IconButton(
-                            iconSize: 15.0,
-                            padding: EdgeInsets.zero,
-                            icon: const Icon(Icons.remove, color: Colors.white),
-                            onPressed: () => _removeBeneficiary(index),
-                          ),
-                        ),
+                        ],
+                      );
+                    }),
+                    SizedBox(height: screenHeight * 0.02),
+                    ElevatedButton.icon(
+                      style: ElevatedButton.styleFrom(
+                        primary: Colors.blue[100],
+                        onPrimary: Colors.blue,
                       ),
-                    ],
-                  );
-                }),
-                // Botão de adicionar beneficiário
-                TextButton.icon(
-                  icon: const Icon(Icons.add, color: Colors.blue),
-                  label: const Text('Adicionar beneficiário',
-                      style: TextStyle(color: Colors.blue)),
-                  onPressed: _addBeneficiary,
+                      icon: const Icon(Icons.add),
+                      label: const Text('Adicionar beneficiário'),
+                      onPressed: _addBeneficiary,
+                    ),
+                    SizedBox(height: screenHeight * 0.02),
+                  ],
                 ),
-                SizedBox(height: screenHeight * 0.02),
 
+                // Seção Arquivos anexados
                 Column(
-                  children: _selectedFiles
-                      .map((file) => ListTile(
-                            title: Text(file.path
-                                .split('/')
-                                .last), // Exibir o nome do arquivo
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      "Arquivos anexados",
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                    ..._selectedFiles.map((file) => Card(
+                          margin: const EdgeInsets.symmetric(vertical: 4.0),
+                          child: ListTile(
+                            leading: const Icon(Icons.attach_file),
+                            title: Text(file.path.split('/').last),
                             trailing: IconButton(
                               icon: const Icon(Icons.delete, color: Colors.red),
                               onPressed: () {
@@ -385,29 +411,42 @@ class HealthInsuranceReimbursementScreenState
                                 });
                               },
                             ),
-                          ))
-                      .toList(),
+                          ),
+                        )),
+                    SizedBox(height: screenHeight * 0.02),
+                    ElevatedButton.icon(
+                      style: ElevatedButton.styleFrom(
+                        primary: Colors.blue[100],
+                        onPrimary: Colors.blue,
+                      ),
+                      icon: const Icon(Icons.attach_file),
+                      label: Text(
+                        _selectedFiles.isNotEmpty
+                            ? 'Arquivo Anexado'
+                            : 'Anexar Arquivo',
+                      ),
+                      onPressed: _pickFile,
+                    ),
+                    SizedBox(height: screenHeight * 0.02),
+                  ],
                 ),
-                SizedBox(height: screenHeight * 0.02),
-                TextButton.icon(
-                  icon: const Icon(Icons.attach_file, color: Colors.blue),
-                  label: Text(
-                    _selectedFiles.isNotEmpty
-                        ? 'Arquivo Anexado'
-                        : 'Anexar Arquivo',
-                    style: const TextStyle(color: Colors.blue),
-                  ),
-                  onPressed: _pickFile,
-                ),
-                SizedBox(height: screenHeight * 0.02),
-                // 2% da altura da tela
-                // Botão de enviar solicitação
-                ElevatedButton(
-                  child: const Text('Enviar Solicitação',
-                      style: TextStyle(color: Colors.white)),
-                  onPressed: () {
-                    // Aqui você pode adicionar a lógica para enviar a solicitação de reembolso
-                  },
+
+                // Seção de Botões de confirmação
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: <Widget>[
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(primary: Colors.red),
+                      onPressed: () {},
+                      child: const Text('Cancelar'),
+                    ),
+                    const SizedBox(width: 10),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(primary: Colors.blue),
+                      onPressed: () {},
+                      child: const Text('Confirmar'),
+                    ),
+                  ],
                 ),
               ],
             ),
