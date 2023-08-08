@@ -8,6 +8,8 @@ import 'package:provider/provider.dart';
 import 'package:yggdrasil/services/auth_service.dart';
 import 'package:extended_masked_text/extended_masked_text.dart';
 import 'package:file_picker/file_picker.dart';
+import 'dart:convert';
+import 'dart:math';
 
 // Definindo o widget da tela de Solicitação de Reembolso de Plano de Saúde
 class HealthInsuranceReimbursementScreen extends StatefulWidget {
@@ -28,7 +30,7 @@ class HealthInsuranceReimbursementScreenState
   List<MoneyMaskedTextController> controllers = [];
   final _dateController = TextEditingController();
 
-  File? _selectedFile;
+  final List<File> _selectedFiles = [];
 
   @override
   void initState() {
@@ -103,15 +105,36 @@ class HealthInsuranceReimbursementScreenState
   }
 
   Future<void> _pickFile() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles();
+    FilePickerResult? result =
+        await FilePicker.platform.pickFiles(allowMultiple: true);
 
     if (result != null) {
       setState(() {
-        _selectedFile = File(result.files.single.path!);
+        for (var path in result.paths) {
+          final file = File(path!);
+          if (!_selectedFiles
+              .any((existingFile) => existingFile.path == file.path)) {
+            _selectedFiles.add(file);
+          }
+        }
       });
     } else {
       // O usuário cancelou a seleção de arquivos
     }
+  }
+
+  String generateGuid() {
+    var random = Random.secure();
+    var values = List<int>.generate(16, (i) => random.nextInt(256));
+    return base64UrlEncode(values).substring(0, 22);
+  }
+
+  List<String> generateNext12Months() {
+    DateTime now = DateTime.now();
+    return List.generate(12, (i) {
+      DateTime nextMonth = now.add(Duration(days: 30 * i));
+      return '${nextMonth.month.toString().padLeft(2, '0')}/${nextMonth.year}';
+    });
   }
 
   // Função para construir a interface gráfica do widget
@@ -133,6 +156,78 @@ class HealthInsuranceReimbursementScreenState
             constraints: BoxConstraints(minHeight: screenHeight),
             child: Column(
               children: <Widget>[
+                Row(
+                  children: [
+                    // Campo de Protocolo
+                    Expanded(
+                      flex: 2, // Dando mais espaço para o Protocolo
+                      child: TextFormField(
+                        readOnly: true,
+                        initialValue: generateGuid().substring(0, 14),
+                        decoration: const InputDecoration(
+                          labelText: 'Protocolo:',
+                          border: OutlineInputBorder(),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(
+                        width: 10), // Espaço entre o Protocolo e os Dropdowns
+
+                    // Dropdown para o Mês
+                    Expanded(
+                      flex: 1,
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButtonFormField<String>(
+                          decoration: const InputDecoration(
+                            labelText: 'Mês',
+                            border: OutlineInputBorder(),
+                          ),
+                          value:
+                              DateTime.now().month.toString().padLeft(2, '0'),
+                          items: List.generate(
+                                  12, (i) => (i + 1).toString().padLeft(2, '0'))
+                              .map((month) {
+                            return DropdownMenuItem(
+                                value: month, child: Text(month));
+                          }).toList(),
+                          onChanged: (String? newValue) {
+                            if (newValue != null) {
+                              // Defina o mês no seu objeto de solicitação de reembolso
+                            }
+                          },
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 5),
+                    // Dropdown para o Ano
+                    Expanded(
+                      flex: 1,
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButtonFormField<String>(
+                          decoration: const InputDecoration(
+                            labelText: 'Ano',
+                            border: OutlineInputBorder(),
+                          ),
+                          value: DateTime.now().year.toString(),
+                          items: [
+                            (DateTime.now().year - 1).toString(),
+                            DateTime.now().year.toString(),
+                            (DateTime.now().year + 1).toString()
+                          ].map((year) {
+                            return DropdownMenuItem(
+                                value: year, child: Text(year));
+                          }).toList(),
+                          onChanged: (String? newValue) {
+                            if (newValue != null) {
+                              // Defina o ano no seu objeto de solicitação de reembolso
+                            }
+                          },
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: screenHeight * 0.02),
                 // Campo para o nome do colaborador
                 TextFormField(
                   decoration: const InputDecoration(
@@ -275,10 +370,29 @@ class HealthInsuranceReimbursementScreenState
                   onPressed: _addBeneficiary,
                 ),
                 SizedBox(height: screenHeight * 0.02),
+
+                Column(
+                  children: _selectedFiles
+                      .map((file) => ListTile(
+                            title: Text(file.path
+                                .split('/')
+                                .last), // Exibir o nome do arquivo
+                            trailing: IconButton(
+                              icon: const Icon(Icons.delete, color: Colors.red),
+                              onPressed: () {
+                                setState(() {
+                                  _selectedFiles.remove(file);
+                                });
+                              },
+                            ),
+                          ))
+                      .toList(),
+                ),
+                SizedBox(height: screenHeight * 0.02),
                 TextButton.icon(
                   icon: const Icon(Icons.attach_file, color: Colors.blue),
                   label: Text(
-                    _selectedFile != null
+                    _selectedFiles.isNotEmpty
                         ? 'Arquivo Anexado'
                         : 'Anexar Arquivo',
                     style: const TextStyle(color: Colors.blue),
