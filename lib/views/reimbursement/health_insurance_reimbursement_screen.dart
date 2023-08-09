@@ -378,8 +378,7 @@ class HealthInsuranceReimbursementScreenState
                     SizedBox(height: screenHeight * 0.02),
                     ElevatedButton.icon(
                       style: ElevatedButton.styleFrom(
-                        primary: Colors.blue[100],
-                        onPrimary: Colors.blue,
+                        foregroundColor: Colors.blue, backgroundColor: Colors.blue[100],
                       ),
                       icon: const Icon(Icons.add),
                       label: const Text('Adicionar beneficiário'),
@@ -416,8 +415,7 @@ class HealthInsuranceReimbursementScreenState
                     SizedBox(height: screenHeight * 0.02),
                     ElevatedButton.icon(
                       style: ElevatedButton.styleFrom(
-                        primary: Colors.blue[100],
-                        onPrimary: Colors.blue,
+                        foregroundColor: Colors.blue, backgroundColor: Colors.blue[100],
                       ),
                       icon: const Icon(Icons.attach_file),
                       label: Text(
@@ -436,13 +434,13 @@ class HealthInsuranceReimbursementScreenState
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: <Widget>[
                     ElevatedButton(
-                      style: ElevatedButton.styleFrom(primary: Colors.red),
+                      style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
                       onPressed: () {},
                       child: const Text('Cancelar'),
                     ),
                     const SizedBox(width: 10),
                     ElevatedButton(
-                      style: ElevatedButton.styleFrom(primary: Colors.blue),
+                      style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
                       onPressed: () {},
                       child: const Text('Confirmar'),
                     ),
