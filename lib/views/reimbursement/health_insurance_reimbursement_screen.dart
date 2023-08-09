@@ -8,8 +8,11 @@ import 'package:provider/provider.dart';
 import 'package:yggdrasil/services/auth_service.dart';
 import 'package:extended_masked_text/extended_masked_text.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:yggdrasil/services/reimbursement_service.dart';
 import 'dart:convert';
 import 'dart:math';
+
+import 'package:yggdrasil/services/storage_service.dart';
 
 // Definindo o widget da tela de Solicitação de Reembolso de Plano de Saúde
 class HealthInsuranceReimbursementScreen extends StatefulWidget {
@@ -121,6 +124,15 @@ class HealthInsuranceReimbursementScreenState
     } else {
       // O usuário cancelou a seleção de arquivos
     }
+
+    if (_selectedFiles.isNotEmpty) {
+      for (var file in _selectedFiles) {
+        final path =
+            'reimbursements/${DateTime.now().millisecondsSinceEpoch}/${file.path.split('/').last}';
+        final downloadUrl = await StorageService().uploadFile(file, path);
+        // Aqui você pode armazenar o downloadUrl em uma lista ou em um modelo para uso posterior
+      }
+    }
   }
 
   String generateGuid() {
@@ -228,7 +240,6 @@ class HealthInsuranceReimbursementScreenState
                   ],
                 ),
                 SizedBox(height: screenHeight * 0.02),
-
                 // Campo do nome do colaborador
                 TextFormField(
                   decoration: const InputDecoration(
@@ -251,7 +262,7 @@ class HealthInsuranceReimbursementScreenState
                       style:
                           TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
-// Lista de beneficiários
+                    // Lista de beneficiários
                     ...List.generate(_reimbursementRequest.beneficiaries.length,
                         (index) {
                       return Stack(
@@ -378,7 +389,8 @@ class HealthInsuranceReimbursementScreenState
                     SizedBox(height: screenHeight * 0.02),
                     ElevatedButton.icon(
                       style: ElevatedButton.styleFrom(
-                        foregroundColor: Colors.blue, backgroundColor: Colors.blue[100],
+                        foregroundColor: Colors.blue,
+                        backgroundColor: Colors.blue[100],
                       ),
                       icon: const Icon(Icons.add),
                       label: const Text('Adicionar beneficiário'),
@@ -415,7 +427,8 @@ class HealthInsuranceReimbursementScreenState
                     SizedBox(height: screenHeight * 0.02),
                     ElevatedButton.icon(
                       style: ElevatedButton.styleFrom(
-                        foregroundColor: Colors.blue, backgroundColor: Colors.blue[100],
+                        foregroundColor: Colors.blue,
+                        backgroundColor: Colors.blue[100],
                       ),
                       icon: const Icon(Icons.attach_file),
                       label: Text(
@@ -428,20 +441,38 @@ class HealthInsuranceReimbursementScreenState
                     SizedBox(height: screenHeight * 0.02),
                   ],
                 ),
-
                 // Seção de Botões de confirmação
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: <Widget>[
                     ElevatedButton(
-                      style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                      style:
+                          ElevatedButton.styleFrom(backgroundColor: Colors.red),
                       onPressed: () {},
                       child: const Text('Cancelar'),
                     ),
                     const SizedBox(width: 10),
                     ElevatedButton(
-                      style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
-                      onPressed: () {},
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.blue),
+                      onPressed: () async {
+                        if (_formKey.currentState!.validate()) {                        
+                          final requestData = {
+                            'requesterName':
+                                _reimbursementRequest.requesterName,
+                            'date': _reimbursementRequest.date,
+                            'beneficiaries': _reimbursementRequest.beneficiaries
+                                .map((beneficiary) {
+                              return {
+                                'name': beneficiary.name,
+                                'amount': beneficiary.amount,
+                                'type': beneficiary.type.toString(),
+                              };
+                            }).toList(),                            
+                          };
+                          await ReimbursementService().saveRequest(requestData);                          
+                        }
+                      },
                       child: const Text('Confirmar'),
                     ),
                   ],
