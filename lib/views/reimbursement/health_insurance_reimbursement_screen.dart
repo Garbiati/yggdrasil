@@ -1,4 +1,5 @@
 // Importando as dependências necessárias
+import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -34,6 +35,10 @@ class HealthInsuranceReimbursementScreenState
   final _dateController = TextEditingController();
 
   final List<File> _selectedFiles = [];
+  final List<String> _fileDownloadUrls = [];
+
+  String? selectedMonth;
+  String? selectedYear;
 
   @override
   void initState() {
@@ -130,7 +135,7 @@ class HealthInsuranceReimbursementScreenState
         final path =
             'reimbursements/${DateTime.now().millisecondsSinceEpoch}/${file.path.split('/').last}';
         final downloadUrl = await StorageService().uploadFile(file, path);
-        // Aqui você pode armazenar o downloadUrl em uma lista ou em um modelo para uso posterior
+        _fileDownloadUrls.add(downloadUrl);
       }
     }
   }
@@ -204,7 +209,9 @@ class HealthInsuranceReimbursementScreenState
                           }).toList(),
                           onChanged: (String? newValue) {
                             if (newValue != null) {
-                              // Sua lógica de tratamento para o mês selecionado
+                              setState(() {
+                                selectedMonth = newValue;
+                              });
                             }
                           },
                         ),
@@ -231,7 +238,9 @@ class HealthInsuranceReimbursementScreenState
                           }).toList(),
                           onChanged: (String? newValue) {
                             if (newValue != null) {
-                              // Sua lógica de tratamento para o ano selecionado
+                              setState(() {
+                                selectedYear = newValue;
+                              });
                             }
                           },
                         ),
@@ -456,11 +465,14 @@ class HealthInsuranceReimbursementScreenState
                       style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.blue),
                       onPressed: () async {
-                        if (_formKey.currentState!.validate()) {                        
+                        if (_formKey.currentState!.validate()) {
                           final requestData = {
                             'requesterName':
                                 _reimbursementRequest.requesterName,
                             'date': _reimbursementRequest.date,
+                            'month': selectedMonth,
+                            'year': selectedYear,
+                            'fileUrls': _fileDownloadUrls,
                             'beneficiaries': _reimbursementRequest.beneficiaries
                                 .map((beneficiary) {
                               return {
@@ -468,9 +480,11 @@ class HealthInsuranceReimbursementScreenState
                                 'amount': beneficiary.amount,
                                 'type': beneficiary.type.toString(),
                               };
-                            }).toList(),                            
+                            }).toList(),
                           };
-                          await ReimbursementService().saveRequest(requestData);                          
+                          await ReimbursementService()
+                              .saveRequest(requestData)
+                              .then((value) => Navigator.pop(context));
                         }
                       },
                       child: const Text('Confirmar'),
