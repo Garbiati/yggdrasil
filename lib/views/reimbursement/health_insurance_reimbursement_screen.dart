@@ -33,6 +33,7 @@ class HealthInsuranceReimbursementScreenState
   // Inicializando uma lista para os controladores de texto dos campos de valor
   List<MoneyMaskedTextController> controllers = [];
   final _dateController = TextEditingController();
+  final TextEditingController protocolController = TextEditingController();
 
   final List<File> _selectedFiles = [];
   final List<String> _fileDownloadUrls = [];
@@ -43,6 +44,8 @@ class HealthInsuranceReimbursementScreenState
   @override
   void initState() {
     super.initState();
+
+    protocolController.text = generateGuid().substring(0, 14);
 
     // Obtendo o nome do usuário logado
     final username = context.read<AuthService>().user.value?.displayName ?? '';
@@ -181,8 +184,8 @@ class HealthInsuranceReimbursementScreenState
                     Expanded(
                       flex: 2, // Dando mais espaço para o Protocolo
                       child: TextFormField(
+                        controller: protocolController,
                         readOnly: true,
-                        initialValue: generateGuid().substring(0, 14),
                         decoration: const InputDecoration(
                           labelText: 'Protocolo:',
                           border: OutlineInputBorder(),
@@ -467,6 +470,7 @@ class HealthInsuranceReimbursementScreenState
                       onPressed: () async {
                         if (_formKey.currentState!.validate()) {
                           final requestData = {
+                            'protocol': protocolController.text,
                             'requesterName':
                                 _reimbursementRequest.requesterName,
                             'date': _reimbursementRequest.date,
@@ -482,6 +486,7 @@ class HealthInsuranceReimbursementScreenState
                               };
                             }).toList(),
                           };
+
                           await ReimbursementService()
                               .saveRequest(requestData)
                               .then((value) => Navigator.pop(context));
